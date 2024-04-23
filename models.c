@@ -2,13 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
-struct Matrix
-{
-    int rowNum;
-    int colNum;
-    float *data;
-};
+#include "models.h"
 
 struct Matrix matrixMultiply(struct Matrix *matrix1, struct Matrix *matrix2)
 {
@@ -74,13 +68,6 @@ void printMatrix(struct Matrix *matrix)
         printf("\n");
     }
 }
-
-struct AttentionHead
-{
-    struct Matrix wQuery;
-    struct Matrix wKey;
-    struct Matrix wValue;
-};
 
 struct Matrix getQuery(struct AttentionHead *attentionHead, struct Matrix *input)
 {
@@ -157,5 +144,6 @@ int main()
     attentionHead.wValue = createRandomMatrix(3, 3);
     struct Matrix result;
     result = attention(&attentionHead, &inputSequence);
+    printMatrix(&result);
     return 0;
 }

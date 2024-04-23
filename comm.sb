@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name="para"
+#SBATCH --output="para.%j.%N.out"
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --gpus=1
+#SBATCH --account=csd759
+#SBATCH -t 00:10:00
+
+#Environment
+module purge
+module load slurm
+module load cpu/0.17.3b  gcc/10.2.0/npcyll4
+module load openmpi/4.1.1
+
+
+#Run the job
+srun -N1 -n4 -ppReserved para
