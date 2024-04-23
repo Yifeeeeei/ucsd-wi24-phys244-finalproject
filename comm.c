@@ -8,7 +8,7 @@
 #define KEY_DIM 2
 #define VAL_DIM 4
 
-struct createAttentionHead(int rank)
+struct AttentionHead createAttentionHead(int rank)
 {
     // currently, rank is not used. it's just a dummy parameter
     struct AttentionHead attentionHead;
@@ -24,7 +24,7 @@ void sendAttentionHead(int dest, struct AttentionHead *attentionHead)
     MPI_Send(attentionHead->wValue.data, VAL_DIM * TKN_DIM, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
 }
 
-struct receiveAttentionHead(int source)
+struct AttentionHead receiveAttentionHead(int source)
 {
     struct AttentionHead attentionHead;
     attentionHead.wQuery = createMatrixFrom1DArray(KEY_DIM, TKN_DIM, NULL);
@@ -49,7 +49,7 @@ struct Matrix receiveAttentionResult(int source)
     return result;
 }
 
-struct sendAttentionResult(int dest, struct Matrix *result)
+void sendAttentionResult(int dest, struct Matrix *result)
 {
     MPI_Send(result->data, VAL_DIM * SEQ_LEN, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
 }
@@ -60,11 +60,6 @@ struct Matrix getSequence()
     return sequence;
 }
 
-void sendSequence(int dest, struct Matrix *sequence)
-{
-    MPI_Send(sequence->data, TKN_DIM * SEQ_LEN, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
-}
-
 struct Matrix receiveSequence(int source)
 {
     struct Matrix sequence = createMatrixFrom1DArray(TKN_DIM, SEQ_LEN, NULL);
@@ -72,7 +67,7 @@ struct Matrix receiveSequence(int source)
     return sequence;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     // MPI initialization
     int numTasks, rank, numWorkers;
@@ -85,11 +80,13 @@ int main()
         MPI_Finalize();
         return 0;
     }
+    printf("Rank %d of %d starting...\n", rank, numTasks);
     numWorkers = numTasks - 1;
 
     if (rank == MASTER)
     {
         // getting data
+        printf("master starting\n");
         struct Matrix sequence = getSequence();
         // send the data to each worker
         for (int i = 1; i <= numWorkers; i++)
@@ -104,6 +101,7 @@ int main()
             struct Matrix result = receiveAttentionResult(i);
             printMatrix(&result);
         }
+        printf("master ending\n");
     }
     else
     {
@@ -113,5 +111,6 @@ int main()
         struct Matrix result = attention(&attentionHead, &sequence);
         sendAttentionResult(MASTER, &result);
     }
+    MPI_Finalize();
     return 0;
 }

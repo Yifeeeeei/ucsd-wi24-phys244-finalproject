@@ -131,19 +131,19 @@ struct Matrix attention(struct AttentionHead *attentionHead, struct Matrix *inpu
     struct Matrix result = matrixMultiply(&attentionMatrix, &VTranspose);
     return transpose(result);
 }
-int main()
-{
+// int main()
+// {
 
-    printf("running attentionModels\n");
+//     printf("running attentionModels\n");
 
-    int inputSequenceLength = 6;
-    struct Matrix inputSequence = createRandomMatrix(3, inputSequenceLength);
-    struct AttentionHead attentionHead;
-    attentionHead.wQuery = createRandomMatrix(3, 3);
-    attentionHead.wKey = createRandomMatrix(3, 3);
-    attentionHead.wValue = createRandomMatrix(3, 3);
-    struct Matrix result;
-    result = attention(&attentionHead, &inputSequence);
-    printMatrix(&result);
-    return 0;
-}
+//     int inputSequenceLength = 6;
+//     struct Matrix inputSequence = createRandomMatrix(3, inputSequenceLength);
+//     struct AttentionHead attentionHead;
+//     attentionHead.wQuery = createRandomMatrix(3, 3);
+//     attentionHead.wKey = createRandomMatrix(3, 3);
+//     attentionHead.wValue = createRandomMatrix(3, 3);
+//     struct Matrix result;
+//     result = attention(&attentionHead, &inputSequence);
+//     printMatrix(&result);
+//     return 0;
+// }

@@ -12,3 +12,4 @@ comm: comm.c
 clean:
 	rm -f models
 	rm -f *.out
+	rm -f core.*
