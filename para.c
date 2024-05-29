@@ -110,10 +110,12 @@ int main(int argc, char *argv[])
             sendSequence(i, &sequence);
         }
         // receive the results from each worker
+        struct Matrix finalResult = createZeroMatrix(SEQ_LEN, VAL_DIM);
         for (int i = 1; i <= numWorkers; i++)
         {
             struct Matrix result = receiveAttentionResult(i);
             printMatrix(&result);
+            printf("\n");
         }
         printf("master ending\n");
     }
