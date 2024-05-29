@@ -1,3 +1,5 @@
 models
 comm
 my_comm
+*.out
+para
