@@ -13,3 +13,5 @@ clean:
 	rm -f models
 	rm -f *.out
 	rm -f core.*
+	rm -f comm
+	rm -f my_comm

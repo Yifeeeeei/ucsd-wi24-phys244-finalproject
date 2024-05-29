@@ -57,6 +57,20 @@ struct Matrix createRandomMatrix(int rowNum, int colNum)
     return matrix;
 }
 
+struct Matrix createZeroMatrix(int rowNum, int colNum)
+{
+    struct Matrix matrix;
+    matrix.rowNum = rowNum;
+    matrix.colNum = colNum;
+    matrix.data = malloc(sizeof(float) * rowNum * colNum);
+    // each element bewteen 0 and 1
+    for (int i = 0; i < rowNum * colNum; i++)
+    {
+        matrix.data[i] = 0;
+    }
+    return matrix;
+}
+
 void printMatrix(struct Matrix *matrix)
 {
     for (int i = 0; i < matrix->rowNum; i++)

@@ -14,6 +14,7 @@ struct AttentionHead
 struct Matrix matrixMultiply(struct Matrix *matrix1, struct Matrix *matrix2);
 struct Matrix createMatrixFrom1DArray(int rowNum, int colNum, float data[]);
 struct Matrix createRandomMatrix(int rowNum, int colNum);
+struct Matrix createZeroMatrix(int rowNum, int colNum);
 void printMatrix(struct Matrix *matrix);
 struct Matrix getQuery(struct AttentionHead *attentionHead, struct Matrix *input);
 struct Matrix getKey(struct AttentionHead *attentionHead, struct Matrix *input);
