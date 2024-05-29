@@ -1,3 +1,4 @@
+#include <cblas.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -6,26 +7,61 @@
 
 struct Matrix matrixMultiply(struct Matrix *matrix1, struct Matrix *matrix2)
 {
+    // struct Matrix result;
+    // result.rowNum = matrix1->rowNum;
+    // result.colNum = matrix2->colNum;
+    // if (matrix1->colNum != matrix2->rowNum)
+    // {
+    //     printf("Matrix multiplication error: matrix1.colNum != matrix2.rowNum\n");
+    //     return result;
+    // }
+    // result.data = (float *)malloc(sizeof(float) * result.rowNum * result.colNum);
+    // for (int i = 0; i < result.rowNum; i++)
+    // {
+    //     for (int j = 0; j < result.colNum; j++)
+    //     {
+    //         result.data[i * result.colNum + j] = 0;
+    //         for (int k = 0; k < matrix1->colNum; k++)
+    //         {
+    //             result.data[i * result.colNum + j] += matrix1->data[i * matrix1->colNum + k] * matrix2->data[k * matrix2->colNum + j];
+    //         }
+    //     }
+    // }
+
+    // return result;
+
+    // using open blas
     struct Matrix result;
-    result.rowNum = matrix1->rowNum;
-    result.colNum = matrix2->colNum;
     if (matrix1->colNum != matrix2->rowNum)
     {
         printf("Matrix multiplication error: matrix1.colNum != matrix2.rowNum\n");
+        result.rowNum = 0;
+        result.colNum = 0;
+        result.data = NULL;
         return result;
     }
+
+    result.rowNum = matrix1->rowNum;
+    result.colNum = matrix2->colNum;
     result.data = (float *)malloc(sizeof(float) * result.rowNum * result.colNum);
-    for (int i = 0; i < result.rowNum; i++)
+    if (result.data == NULL)
     {
-        for (int j = 0; j < result.colNum; j++)
-        {
-            result.data[i * result.colNum + j] = 0;
-            for (int k = 0; k < matrix1->colNum; k++)
-            {
-                result.data[i * result.colNum + j] += matrix1->data[i * matrix1->colNum + k] * matrix2->data[k * matrix2->colNum + j];
-            }
-        }
+        printf("Memory allocation failed\n");
+        result.rowNum = 0;
+        result.colNum = 0;
+        return result;
     }
+
+    // Perform matrix multiplication using OpenBLAS
+    // C = alpha * A * B + beta * C
+    // We want C = A * B, so alpha = 1, beta = 0
+    float alpha = 1.0f;
+    float beta = 0.0f;
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                result.rowNum, result.colNum, matrix1->colNum,
+                alpha, matrix1->data, matrix1->colNum,
+                matrix2->data, matrix2->colNum,
+                beta, result.data, result.colNum);
 
     return result;
 }
