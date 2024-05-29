@@ -5,6 +5,17 @@
 #include <math.h>
 #include "models.h"
 
+void matrixAdd(struct Matrix *dest, struct Matrix *source)
+{
+    for (int i = 0; i < dest->rowNum; i++)
+    {
+        for (int j = 0; j < dest->colNum; j++)
+        {
+            dest->data[i * dest->colNum + j] += source->data[i * source->colNum + j];
+        }
+    }
+}
+
 struct Matrix matrixMultiply(struct Matrix *matrix1, struct Matrix *matrix2)
 {
     // struct Matrix result;

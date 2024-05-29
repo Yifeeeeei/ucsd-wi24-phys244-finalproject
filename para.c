@@ -116,8 +116,11 @@ int main(int argc, char *argv[])
             struct Matrix result = receiveAttentionResult(i);
             printMatrix(&result);
             printf("\n");
+            matrixAdd(&finalResult, &result);
         }
         printf("master ending\n");
+        printf("final result\n");
+        printMatrix(&finalResult);
     }
     else
     {
