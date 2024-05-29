@@ -16,6 +16,7 @@ struct AttentionHead createAttentionHead(int rank)
     attentionHead.wQuery = createRandomMatrix(KEY_DIM, TKN_DIM);
     attentionHead.wKey = createRandomMatrix(KEY_DIM, TKN_DIM);
     attentionHead.wValue = createRandomMatrix(VAL_DIM, TKN_DIM);
+    attentionHead.mask = createRandomMatrix(SEQ_LEN, SEQ_LEN);
     return attentionHead;
 }
 void sendAttentionHead(int dest, struct AttentionHead *attentionHead)
@@ -23,6 +24,7 @@ void sendAttentionHead(int dest, struct AttentionHead *attentionHead)
     MPI_Send(attentionHead->wQuery.data, KEY_DIM * TKN_DIM, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
     MPI_Send(attentionHead->wKey.data, KEY_DIM * TKN_DIM, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
     MPI_Send(attentionHead->wValue.data, VAL_DIM * TKN_DIM, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
+    MPI_Send(attentionHead->mask.data, SEQ_LEN * SEQ_LEN, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
 }
 
 struct AttentionHead receiveAttentionHead(int source)
@@ -32,9 +34,11 @@ struct AttentionHead receiveAttentionHead(int source)
     attentionHead.wQuery = createZeroMatrix(KEY_DIM, TKN_DIM);
     attentionHead.wKey = createZeroMatrix(KEY_DIM, TKN_DIM);
     attentionHead.wValue = createZeroMatrix(VAL_DIM, TKN_DIM);
+    attentionHead.mask = createZeroMatrix(SEQ_LEN, SEQ_LEN);
     MPI_Recv(attentionHead.wQuery.data, KEY_DIM * TKN_DIM, MPI_FLOAT, source, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(attentionHead.wKey.data, KEY_DIM * TKN_DIM, MPI_FLOAT, source, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(attentionHead.wValue.data, VAL_DIM * TKN_DIM, MPI_FLOAT, source, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(attentionHead.mask.data, SEQ_LEN * SEQ_LEN, MPI_FLOAT, source, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     return attentionHead;
 
     // return createAttentionHead(source);

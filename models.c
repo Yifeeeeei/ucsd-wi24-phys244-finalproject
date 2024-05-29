@@ -178,6 +178,18 @@ struct Matrix attention(struct AttentionHead *attentionHead, struct Matrix *inpu
     struct Matrix VTranspose = transpose(V);
     struct Matrix scores = matrixMultiply(&QTranspose, &K);
     struct Matrix attentionMatrix = rowWiseSoftmax(&scores);
+    if (attentionHead->mask.rowNum > 0 && attentionHead->mask.colNum > 0)
+    {
+        // apply mask
+        for (int i = 0; i < attentionMatrix.rowNum; i++)
+        {
+            for (int j = 0; j < attentionMatrix.colNum; j++)
+            {
+                attentionMatrix.data[i * attentionMatrix.colNum + j] *= attentionHead->mask.data[i * attentionMatrix.colNum + j];
+            }
+        }
+    }
+
     struct Matrix result = matrixMultiply(&attentionMatrix, &VTranspose);
     return transpose(result);
 }

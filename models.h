@@ -9,6 +9,7 @@ struct AttentionHead
     struct Matrix wQuery;
     struct Matrix wKey;
     struct Matrix wValue;
+    struct Matrix mask;
 };
 
 struct Matrix matrixMultiply(struct Matrix *matrix1, struct Matrix *matrix2);
