@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name="comm"
-#SBATCH --output="comm.%j.%N.out"
+#SBATCH --job-name="para"
+#SBATCH --output="para.%j.%N.out"
 #SBATCH --partition=gpu-shared
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
@@ -16,4 +16,4 @@ module load openmpi/4.1.1
 
 
 #Run the job
-srun -N1 -n4 -ppReserved my_comm
+srun -N1 -n4 -ppReserved para
