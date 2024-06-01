@@ -82,12 +82,16 @@ struct Matrix receiveSequence(int source)
 int main(int argc, char *argv[])
 {
     // MPI initialization
-    int numTasks = 4;
-    int rank = 1;
-    int numWorkers = numTasks - 1;
+    int numTasks;
+    int rank;
+    // printf("A Starting...\n");
+    // printf("B numTasks = %d\n", numTasks);;
+    // printf("D rank = %d\n", rank);
+    // printf("E MASTER = %d\n", MASTER);
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
+
     if (numTasks < 2)
     {
         printf("Need at least 2 processes\n");
@@ -95,7 +99,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     printf("Rank %d of %d starting...\n", rank, numTasks);
-    numWorkers = numTasks - 1;
+
 
     if (rank == MASTER)
     {
@@ -103,33 +107,48 @@ int main(int argc, char *argv[])
         printf("master starting\n");
         struct Matrix sequence = getSequence();
         // send the data to each worker
-        for (int i = 1; i <= numWorkers; i++)
+        for (int i = 1; i < numTasks; i++)
         {
             struct AttentionHead attentionHead = createAttentionHead(i);
             sendAttentionHead(i, &attentionHead);
             sendSequence(i, &sequence);
         }
+
         // receive the results from each worker
         struct Matrix finalResult = createZeroMatrix(VAL_DIM, SEQ_LEN);
-        for (int i = 1; i <= numWorkers; i++)
+        double start_time = MPI_Wtime();
+
+        for (int i = 1; i < numTasks; i++)
         {
             struct Matrix result = receiveAttentionResult(i);
             printMatrix(&result);
             printf("\n");
             matrixAdd(&finalResult, &result);
         }
+
+        double end_time = MPI_Wtime();
+        printf("Master: Aggregation time = %f seconds.\n", end_time - start_time);
+
         printf("master ending\n");
         printf("final result\n");
         printMatrix(&finalResult);
     }
-    else
-    {
+    else {
         // Worker
+        double start_time, end_time;
+        
         struct AttentionHead attentionHead = receiveAttentionHead(MASTER);
         struct Matrix sequence = receiveSequence(MASTER);
+
+        start_time = MPI_Wtime();
         struct Matrix result = attention(&attentionHead, &sequence);
+        end_time = MPI_Wtime();
+
+        printf("Worker %d: Attention processing time = %f seconds.\n", rank, end_time - start_time);
+
         sendAttentionResult(MASTER, &result);
     }
+
     MPI_Finalize();
     return 0;
 }
