@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
     }
     printf("Rank %d of %d starting...\n", rank, numTasks);
 
-
     if (rank == MASTER)
     {
         // getting data
@@ -121,7 +120,7 @@ int main(int argc, char *argv[])
         for (int i = 1; i < numTasks; i++)
         {
             struct Matrix result = receiveAttentionResult(i);
-            printMatrix(&result);
+            // printMatrix(&result);
             printf("\n");
             matrixAdd(&finalResult, &result);
         }
@@ -131,12 +130,13 @@ int main(int argc, char *argv[])
 
         printf("master ending\n");
         printf("final result\n");
-        printMatrix(&finalResult);
+        // printMatrix(&finalResult);
     }
-    else {
+    else
+    {
         // Worker
         double start_time, end_time;
-        
+
         struct AttentionHead attentionHead = receiveAttentionHead(MASTER);
         struct Matrix sequence = receiveSequence(MASTER);
 
@@ -144,9 +144,8 @@ int main(int argc, char *argv[])
         struct Matrix result = attention(&attentionHead, &sequence);
         end_time = MPI_Wtime();
 
-        printf("Worker %d: Attention processing time = %f seconds.\n", rank, end_time - start_time);
-
         sendAttentionResult(MASTER, &result);
+        printf("Worker %d: Attention processing time = %f seconds.\n", rank, end_time - start_time);
     }
 
     MPI_Finalize();
