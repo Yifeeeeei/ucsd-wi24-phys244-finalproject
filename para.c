@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MASTER 0
-#define SEQ_LEN 6
-#define TKN_DIM 3
-#define KEY_DIM 2
-#define VAL_DIM 4
+#define MASTER 0       
+// para: dimensions
+#define SEQ_LEN 60
+#define TKN_DIM 30
+#define KEY_DIM 20
+#define VAL_DIM 40
 
 struct AttentionHead createAttentionHead(int rank)
 {
